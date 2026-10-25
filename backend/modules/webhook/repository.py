@@ -2,7 +2,6 @@
 from __future__ import annotations  # `list()` method must not shadow list[...] hints
 
 from datetime import UTC, datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import and_, func, select, update
@@ -22,7 +21,7 @@ class WebhookRepository:
         await self.db.refresh(wh)
         return wh
 
-    async def get(self, webhook_id: UUID, tenant_id: UUID) -> Optional[Webhook]:
+    async def get(self, webhook_id: UUID, tenant_id: UUID) -> Webhook | None:
         result = await self.db.execute(
             select(Webhook).where(and_(
                 Webhook.id == webhook_id,
@@ -40,7 +39,7 @@ class WebhookRepository:
         result = await self.db.execute(base)
         return list(result.scalars().all()), total or 0
 
-    async def update(self, webhook_id: UUID, tenant_id: UUID, **kwargs) -> Optional[Webhook]:
+    async def update(self, webhook_id: UUID, tenant_id: UUID, **kwargs) -> Webhook | None:
         await self.db.execute(
             update(Webhook)
             .where(and_(Webhook.id == webhook_id, Webhook.tenant_id == tenant_id))

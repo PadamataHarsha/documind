@@ -2,20 +2,22 @@
 from __future__ import annotations
 
 import asyncio
+import os
+
+# Import all models to ensure they are registered with Base.metadata
+import sys
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# Import all models to ensure they are registered with Base.metadata
-import sys
-import os
+from alembic import context
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import settings  # noqa: E402
-from models import Base  # noqa: E402  — must be after sys.path insert
+from config import settings
+from models import Base
 
 config = context.config
 

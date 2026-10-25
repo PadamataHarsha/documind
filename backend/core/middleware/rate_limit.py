@@ -32,7 +32,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 settings.RATE_LIMIT_DEFAULT_REQUESTS,
                 settings.RATE_LIMIT_DEFAULT_WINDOW_SECONDS,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — fail open if Redis is unavailable
             # Fail open if Redis is unavailable.
             return await call_next(request)
 
@@ -63,7 +63,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 from security import decode_access_token
                 payload = decode_access_token(auth.split(" ", 1)[1])
                 return f"user:{payload.get('sub')}"
-            except Exception:
-                pass
+            except Exception:  # noqa: BLE001 — invalid token means we fall back to IP
+                logger.debug("rate_limit.token_decode_failed", path=str(request.url))
         client = request.client.host if request.client else "unknown"
         return f"ip:{client}"

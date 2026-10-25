@@ -3,13 +3,11 @@ Conversation queries — typed statements for conversations and messages.
 """
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Select, and_, select, update
 
 from models import Conversation, Message
-
 
 # ─── Conversations ────────────────────────────────────────────────────────────
 
@@ -27,7 +25,7 @@ def select_conversation(conversation_id: UUID, tenant_id: UUID) -> Select:
 def select_conversations(
     tenant_id: UUID,
     *,
-    user_id: Optional[UUID] = None,
+    user_id: UUID | None = None,
 ) -> Select:
     """Filtered conversation list. Caller handles pagination."""
     stmt = select(Conversation).where(
@@ -82,7 +80,7 @@ def select_messages(
     conversation_id: UUID,
     *,
     limit: int = 100,
-    before_id: Optional[UUID] = None,
+    before_id: UUID | None = None,
 ) -> Select:
     """Messages in a conversation, ordered newest-first."""
     stmt = select(Message).where(

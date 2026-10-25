@@ -2,7 +2,6 @@
 from __future__ import annotations  # `list()` method must not shadow list[...] hints
 
 from datetime import UTC, datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import and_, func, select, update
@@ -32,7 +31,7 @@ class APIKeyRepository:
         result = await self.db.execute(base)
         return list(result.scalars().all()), total or 0
 
-    async def get_active_by_hash(self, key_hash: str) -> Optional[APIKey]:
+    async def get_active_by_hash(self, key_hash: str) -> APIKey | None:
         """Active, non-expired key for authentication."""
         result = await self.db.execute(
             select(APIKey).where(

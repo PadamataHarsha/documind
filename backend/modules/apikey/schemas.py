@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -11,7 +10,7 @@ from pydantic import BaseModel, Field
 class APIKeyCreateRequest(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     scopes: list[str] = Field(default_factory=lambda: ["read"])
-    expires_in_days: Optional[int] = Field(default=None, ge=1, le=365)
+    expires_in_days: int | None = Field(default=None, ge=1, le=365)
 
     model_config = {"extra": "forbid"}
 
@@ -21,8 +20,8 @@ class APIKeyResponse(BaseModel):
     name: str
     key_prefix: str
     scopes: list[str]
-    last_used_at: Optional[datetime]
-    expires_at: Optional[datetime]
+    last_used_at: datetime | None
+    expires_at: datetime | None
     is_active: bool
     created_at: datetime
 

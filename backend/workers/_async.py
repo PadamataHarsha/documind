@@ -14,7 +14,7 @@ from typing import Any, TypeVar
 T = TypeVar("T")
 
 
-def run_async(coro: Coroutine[Any, Any, T]) -> T:
+def run_async[T](coro: Coroutine[Any, Any, T]) -> T:
     """Run a coroutine to completion on a dedicated event loop."""
     loop = asyncio.new_event_loop()
     try:

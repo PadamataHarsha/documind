@@ -69,7 +69,7 @@ async def _deliver_async(task, webhook_id: str, event_type: str, payload: dict) 
                     },
                 )
             resp.raise_for_status()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — any HTTP/network/timeout error from external endpoint
             new_failures = (webhook.failure_count or 0) + 1
             disable = new_failures >= settings.WEBHOOK_DISABLE_AFTER_FAILURES
             await db.execute(

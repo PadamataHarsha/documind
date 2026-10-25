@@ -1,7 +1,6 @@
 """Query rewriter — condenses multi-turn conversation to a standalone question."""
 from __future__ import annotations
 
-
 import structlog
 from openai import AsyncOpenAI
 
@@ -52,6 +51,6 @@ class QueryRewriter:
             )
             rewritten = (response.choices[0].message.content or "").strip()
             return rewritten or query
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — LLM errors are unpredictable; fallback to original query
             logger.warning("rag.query_rewrite_failed", error=str(exc))
             return query  # Fallback to original query on error

@@ -96,7 +96,7 @@ async def _summarize_async(task, conversation_id: str) -> dict:
                 max_tokens=400,
             )
             new_summary = (response.choices[0].message.content or "").strip()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — LLM/network errors are unpredictable
             logger.error("summary.llm_failed", conversation_id=conversation_id, error=str(exc))
             if task.request.retries < task.max_retries:
                 raise task.retry(exc=exc, countdown=30 * (2 ** task.request.retries))

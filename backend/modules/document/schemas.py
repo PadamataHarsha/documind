@@ -2,15 +2,15 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 
 class DocumentUploadRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    title: str | None = None
+    description: str | None = None
     tags: list[str] = Field(default_factory=list)
     custom_metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -20,7 +20,7 @@ class DocumentResponse(BaseModel):
     tenant_id: UUID
     uploaded_by: UUID
     title: str
-    description: Optional[str]
+    description: str | None
     file_name: str
     file_type: str
     mime_type: str
@@ -28,9 +28,9 @@ class DocumentResponse(BaseModel):
     status: str
     tags: list[str]
     custom_metadata: dict[str, Any]
-    page_count: Optional[int]
-    word_count: Optional[int]
-    language: Optional[str]
+    page_count: int | None
+    word_count: int | None
+    language: str | None
     version: int
     created_at: datetime
     updated_at: datetime
@@ -48,12 +48,12 @@ class DocumentListResponse(BaseModel):
 class DocumentStatusResponse(BaseModel):
     id: UUID
     status: str
-    progress: Optional[dict] = None
-    error_message: Optional[str] = None
+    progress: dict | None = None
+    error_message: str | None = None
 
 
 class DocumentUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    tags: Optional[list[str]] = None
-    custom_metadata: Optional[dict[str, Any]] = None
+    title: str | None = None
+    description: str | None = None
+    tags: list[str] | None = None
+    custom_metadata: dict[str, Any] | None = None

@@ -8,7 +8,7 @@ work (or written standalone via `commit=True`).
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 import structlog
@@ -26,12 +26,12 @@ async def record_audit(
     tenant_id: UUID,
     action: str,
     resource_type: str,
-    actor_id: Optional[UUID] = None,
+    actor_id: UUID | None = None,
     actor_type: str = "user",
-    resource_id: Optional[UUID] = None,
+    resource_id: UUID | None = None,
     status: str = "success",
-    metadata: Optional[dict[str, Any]] = None,
-    request: Optional[Request] = None,
+    metadata: dict[str, Any] | None = None,
+    request: Request | None = None,
     commit: bool = False,
 ) -> None:
     """Record an audit entry. Best-effort — swallows and logs any failure."""
@@ -58,5 +58,5 @@ async def record_audit(
         )
         if commit:
             await db.commit()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — audit must never break primary flow
         logger.warning("audit.record_failed", action=action, error=str(exc))

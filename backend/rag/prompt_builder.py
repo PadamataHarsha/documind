@@ -1,8 +1,6 @@
 """Prompt builder — constructs LLM messages from query, context chunks, and history."""
 from __future__ import annotations
 
-from typing import Optional
-
 from rag.retriever import ScoredChunk
 
 SYSTEM_PROMPT = """You are DocuMind, an intelligent document assistant. \
@@ -29,7 +27,7 @@ class PromptBuilder:
         query: str,
         chunks: list[ScoredChunk],
         conversation_history: list,
-        summary: Optional[str] = None,
+        summary: str | None = None,
     ) -> list[dict]:
         """Build the full message list for the LLM."""
         from datetime import date

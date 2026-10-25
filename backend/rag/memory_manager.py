@@ -1,7 +1,6 @@
 """Conversation memory manager — loads history and manages summarization."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import and_, select
@@ -33,7 +32,7 @@ class ConversationMemoryManager:
         )
         return list(reversed(result.scalars().all()))
 
-    async def get_summary(self, conversation_id: UUID) -> Optional[str]:
+    async def get_summary(self, conversation_id: UUID) -> str | None:
         """Get the conversation summary if it exists."""
         result = await self.db.execute(
             select(Conversation.summary).where(Conversation.id == conversation_id)

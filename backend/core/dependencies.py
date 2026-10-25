@@ -199,7 +199,7 @@ def require_roles(*required_roles: str):
 
 # ─── Pagination ───────────────────────────────────────────────────────────────
 
-from fastapi import Query  # noqa: E402  (grouped with the pagination helpers)
+from fastapi import Query
 
 
 class PaginationParams:

@@ -18,13 +18,12 @@ Design:
   - This separation enables: reuse, testing, composability, and type-safety.
   - Filters are composable functions that mutate Select in place.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any, Optional, TypeVar
 from uuid import UUID
 
 from sqlalchemy import Select, and_, func, select, update
 from sqlalchemy.orm import DeclarativeBase
-
 
 # ─── Shared filter composables ────────────────────────────────────────────────
 
@@ -55,4 +54,4 @@ async def count_from(session, subquery) -> int:
 
 def utc_now() -> datetime:
     """Return timezone-aware UTC now."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)

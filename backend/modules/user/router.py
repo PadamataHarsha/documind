@@ -1,7 +1,6 @@
 """User router — profile management, user CRUD (org admins), password change."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Request, status
@@ -99,7 +98,7 @@ async def list_users(
     token: CurrentToken,
     db: DbSession,
     pagination: Pagination,
-    is_active: Optional[bool] = Query(None),
+    is_active: bool | None = Query(None),
 ):
     svc = _svc(db)
     items, total = await svc.list_users(

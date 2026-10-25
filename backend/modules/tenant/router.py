@@ -1,7 +1,6 @@
 """Tenant router — CRUD + usage (superadmin-only for list/create, tenant admins for own tenant)."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
@@ -43,8 +42,8 @@ async def list_tenants(
     _: SuperAdmin,
     pagination: Pagination,
     service: TenantService = Depends(_get_service),
-    status_filter: Optional[str] = Query(None, alias="status"),
-    plan: Optional[str] = Query(None),
+    status_filter: str | None = Query(None, alias="status"),
+    plan: str | None = Query(None),
 ):
     items, total = await service.list_tenants(
         status=status_filter, plan=plan,

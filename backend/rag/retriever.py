@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 from uuid import UUID
 
 import structlog
@@ -21,7 +20,7 @@ class ScoredChunk:
     content: str
     document_title: str
     file_name: str
-    page_number: Optional[int]
+    page_number: int | None
     chunk_index: int
     vector_score: float = 0.0
     bm25_score: float = 0.0
@@ -43,8 +42,8 @@ class HybridRetriever:
         query: str,
         tenant_id: UUID,
         *,
-        document_ids: Optional[list[UUID]] = None,
-        metadata_filters: Optional[dict] = None,
+        document_ids: list[UUID] | None = None,
+        metadata_filters: dict | None = None,
         top_k: int = 5,
     ) -> list[ScoredChunk]:
         """
@@ -88,7 +87,7 @@ class HybridRetriever:
         self,
         embedding: list[float],
         tenant_id: UUID,
-        document_ids: Optional[list[UUID]],
+        document_ids: list[UUID] | None,
         top_k: int,
     ) -> list[ScoredChunk]:
         """Cosine similarity search via pgvector <=> operator."""
@@ -146,7 +145,7 @@ class HybridRetriever:
         self,
         query: str,
         tenant_id: UUID,
-        document_ids: Optional[list[UUID]],
+        document_ids: list[UUID] | None,
         top_k: int,
     ) -> list[ScoredChunk]:
         """PostgreSQL full-text BM25-style search via ts_rank_cd."""

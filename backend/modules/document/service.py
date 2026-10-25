@@ -136,8 +136,8 @@ class DocumentService:
                 self.repo.db, tenant_id, Events.DOCUMENT_UPLOADED,
                 {"document_id": str(doc.id), "title": doc.title, "file_size_bytes": size},
             )
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001 — event emission is best-effort
+            logger.debug("document.event_emit_failed", error=str(exc))
 
         logger.info(
             "document.uploaded",
@@ -190,6 +190,6 @@ class DocumentService:
             )
             logger.info("ingestion.enqueued", document_id=str(document_id), task_id=result.id)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — Celery/broker errors vary by backend
             logger.error("ingestion.enqueue.failed", document_id=str(document_id), error=str(e))
             return False

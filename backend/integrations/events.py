@@ -50,7 +50,7 @@ async def emit_event(
                 )
             )
         ).scalars().all()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — any DB/ORM error must not break the caller
         logger.warning("events.lookup_failed", event=event_type, error=str(exc))
         return 0
 
@@ -71,7 +71,7 @@ async def emit_event(
                 queue="webhooks",
             )
             enqueued += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — Celery/broker errors vary by backend
             logger.warning("events.enqueue_failed", webhook_id=str(wh.id), error=str(exc))
 
     logger.info("events.emitted", event=event_type, tenant_id=str(tenant_id), deliveries=enqueued)

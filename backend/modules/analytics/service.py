@@ -1,7 +1,7 @@
 """Analytics service — aggregates metrics via repository, applies business logic."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from modules.analytics.repository import AnalyticsRepository
@@ -19,10 +19,10 @@ class AnalyticsService:
             for s in ("parsing", "chunking", "embedding")
         )
 
-        month_start = datetime.now(timezone.utc).replace(
+        month_start = datetime.now(UTC).replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
-        today_start = datetime.now(timezone.utc).replace(
+        today_start = datetime.now(UTC).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
 

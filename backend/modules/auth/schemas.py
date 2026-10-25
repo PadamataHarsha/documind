@@ -1,7 +1,6 @@
 """Auth module Pydantic schemas — request/response DTOs."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
@@ -16,7 +15,7 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int  # seconds
-    user: "UserInToken"
+    user: UserInToken
 
 
 class RefreshRequest(BaseModel):
@@ -35,7 +34,7 @@ class UserInToken(BaseModel):
 
 
 class LogoutRequest(BaseModel):
-    refresh_token: Optional[str] = None
+    refresh_token: str | None = None
 
 
 class ChangePasswordRequest(BaseModel):

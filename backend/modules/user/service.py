@@ -1,7 +1,6 @@
 """User service — invite, manage, deactivate users within tenant context."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 import structlog
@@ -11,7 +10,6 @@ from core.exceptions import (
     NotFoundError,
     PermissionDeniedError,
 )
-from security import hash_password, verify_password
 from modules.user.repository import UserRepository
 from modules.user.schemas import (
     ChangePasswordRequest,
@@ -19,6 +17,7 @@ from modules.user.schemas import (
     UserResponse,
     UserUpdateRequest,
 )
+from security import hash_password, verify_password
 
 logger = structlog.get_logger(__name__)
 
@@ -62,7 +61,7 @@ class UserService:
         self,
         tenant_id: UUID,
         *,
-        is_active: Optional[bool] = None,
+        is_active: bool | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> tuple[list[UserResponse], int]:

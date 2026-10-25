@@ -21,7 +21,6 @@ from config import settings
 
 class Base(DeclarativeBase):
     """SQLAlchemy declarative base for all models."""
-    pass
 
 
 def create_engine(database_url: str | None = None, **kwargs: Any) -> AsyncEngine:

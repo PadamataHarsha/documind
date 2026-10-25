@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -24,11 +23,11 @@ async def list_audit_logs(
     token: CurrentToken,
     db: DbSession,
     pagination: Pagination,
-    actor_id: Optional[UUID] = Query(None),
-    action: Optional[str] = Query(None),
-    resource_type: Optional[str] = Query(None),
-    since: Optional[datetime] = Query(None),
-    until: Optional[datetime] = Query(None),
+    actor_id: UUID | None = Query(None),
+    action: str | None = Query(None),
+    resource_type: str | None = Query(None),
+    since: datetime | None = Query(None),
+    until: datetime | None = Query(None),
 ):
     """Return filtered audit log entries for the current tenant."""
     repo = AuditRepository(db)

@@ -85,17 +85,14 @@ def decode_access_token(token: str) -> dict[str, Any]:
     Decode and validate a JWT access token.
     Raises JWTError on invalid/expired token.
     """
-    try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY,
-            algorithms=[settings.JWT_ALGORITHM],
-        )
-        if payload.get("type") != ACCESS_TOKEN_TYPE:
-            raise JWTError("Invalid token type")
-        return payload
-    except JWTError:
-        raise
+    payload = jwt.decode(
+        token,
+        settings.JWT_SECRET_KEY,
+        algorithms=[settings.JWT_ALGORITHM],
+    )
+    if payload.get("type") != ACCESS_TOKEN_TYPE:
+        raise JWTError("Invalid token type")
+    return payload
 
 
 # ─── API Key Utilities ────────────────────────────────────────────────────────
@@ -129,8 +126,8 @@ def hash_token(token: str) -> str:
 
 # ─── Webhook Signing ──────────────────────────────────────────────────────────
 
-import hmac  # noqa: E402  (grouped with the webhook-signing helpers)
-import json  # noqa: E402
+import hmac
+import json
 
 
 def generate_webhook_secret() -> str:

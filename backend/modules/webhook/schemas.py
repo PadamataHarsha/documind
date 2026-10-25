@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
@@ -31,14 +30,14 @@ class WebhookCreateRequest(BaseModel):
 
 
 class WebhookUpdateRequest(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=255)
-    url: Optional[AnyHttpUrl] = None
-    events: Optional[list[str]] = None
-    is_active: Optional[bool] = None
+    name: str | None = Field(None, min_length=1, max_length=255)
+    url: AnyHttpUrl | None = None
+    events: list[str] | None = None
+    is_active: bool | None = None
 
     @field_validator("events")
     @classmethod
-    def validate_events(cls, v: Optional[list[str]]) -> Optional[list[str]]:
+    def validate_events(cls, v: list[str] | None) -> list[str] | None:
         if v is None:
             return v
         invalid = [e for e in v if e not in ALLOWED_EVENTS]
@@ -54,8 +53,8 @@ class WebhookResponse(BaseModel):
     events: list[str]
     is_active: bool
     failure_count: int
-    last_success_at: Optional[datetime]
-    last_failure_at: Optional[datetime]
+    last_success_at: datetime | None
+    last_failure_at: datetime | None
     created_at: datetime
 
     model_config = {"from_attributes": True}

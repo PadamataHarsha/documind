@@ -131,7 +131,6 @@ async def send_message(
         from rag.prompt_builder import PromptBuilder
         from rag.query_rewriter import QueryRewriter
         from rag.retriever import HybridRetriever
-
         from redis_client import get_redis_pool
         embedding_client = EmbeddingClient(redis=await get_redis_pool())
         retriever = HybridRetriever(db=db, embedding_client=embedding_client)
@@ -198,7 +197,7 @@ async def send_message(
                 summarize_conversation.apply_async(
                     kwargs={"conversation_id": str(conv_id)}, queue="summaries"
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — Celery enqueue errors vary by broker
                 logger.warning("chat.summary_enqueue_failed", error=str(exc))
 
     return StreamingResponse(

@@ -144,7 +144,7 @@ class SlidingWindowRateLimiter:
                     self._SCRIPT, 1, key, str(now), str(window_seconds), str(max_requests), member
                 ),
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — fail open; any Redis error type is possible
             # Fail open — never let a Redis hiccup block all traffic.
             return True, max_requests - 1, window_seconds
 

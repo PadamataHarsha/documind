@@ -1,7 +1,7 @@
 """Tenant repository — thin session wrapper over queries.tenants."""
 from __future__ import annotations  # `list()` method must not shadow list[...] hints
 
-from typing import Optional
+from datetime import UTC
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,19 +31,19 @@ class TenantRepository:
         await self.db.refresh(tenant)
         return tenant
 
-    async def get_by_id(self, tenant_id: UUID) -> Optional[Tenant]:
+    async def get_by_id(self, tenant_id: UUID) -> Tenant | None:
         result = await self.db.execute(select_tenant(tenant_id))
         return result.scalar_one_or_none()
 
-    async def get_by_slug(self, slug: str) -> Optional[Tenant]:
+    async def get_by_slug(self, slug: str) -> Tenant | None:
         result = await self.db.execute(select_tenant_by_slug(slug))
         return result.scalar_one_or_none()
 
     async def list(
         self,
         *,
-        status: Optional[str] = None,
-        plan: Optional[str] = None,
+        status: str | None = None,
+        plan: str | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> tuple[list[Tenant], int]:
@@ -52,7 +52,7 @@ class TenantRepository:
         result = await self.db.execute(base.limit(limit).offset(offset))
         return list(result.scalars().all()), total
 
-    async def update(self, tenant_id: UUID, **kwargs) -> Optional[Tenant]:
+    async def update(self, tenant_id: UUID, **kwargs) -> Tenant | None:
         await self.db.execute(update_tenant_fields(tenant_id, **kwargs))
         return await self.get_by_id(tenant_id)
 
@@ -71,11 +71,11 @@ class TenantRepository:
 
     async def get_api_calls_this_month(self, tenant_id: UUID) -> int:
         """Approximate API usage by counting user-issued queries since month start."""
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         from queries.analytics import select_message_count_since
 
-        month_start = datetime.now(timezone.utc).replace(
+        month_start = datetime.now(UTC).replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
         return await self.db.scalar(

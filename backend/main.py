@@ -8,12 +8,13 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 import structlog
-from config import settings
-from core.exceptions import DocuMindError
-from database import close_db
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from config import settings
+from core.exceptions import DocuMindError
+from database import close_db
 from redis_client import close_redis, get_redis_pool
 
 logger = structlog.get_logger(__name__)
@@ -185,7 +186,7 @@ def create_application() -> FastAPI:
 
                 await conn.execute(text("SELECT 1"))
             checks["database"] = "ok"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — any DB error becomes a status string
             checks["database"] = f"error: {e}"
 
         # Redis check
@@ -193,7 +194,7 @@ def create_application() -> FastAPI:
             redis = await get_redis_pool()
             await redis.ping()
             checks["redis"] = "ok"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — any Redis error becomes a status string
             checks["redis"] = f"error: {e}"
 
         overall = "ok" if all(v == "ok" for v in checks.values()) else "degraded"

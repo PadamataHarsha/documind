@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
@@ -28,18 +28,18 @@ class TenantCreateRequest(BaseModel):
 
 
 class TenantUpdateRequest(BaseModel):
-    name: Optional[str] = Field(None, min_length=2, max_length=255)
-    plan: Optional[str] = None
-    status: Optional[str] = None
-    max_storage_bytes: Optional[int] = Field(None, ge=0)
-    max_documents: Optional[int] = Field(None, ge=1)
-    max_users: Optional[int] = Field(None, ge=1)
-    max_api_calls_month: Optional[int] = Field(None, ge=0)
-    settings: Optional[dict[str, Any]] = None
+    name: str | None = Field(None, min_length=2, max_length=255)
+    plan: str | None = None
+    status: str | None = None
+    max_storage_bytes: int | None = Field(None, ge=0)
+    max_documents: int | None = Field(None, ge=1)
+    max_users: int | None = Field(None, ge=1)
+    max_api_calls_month: int | None = Field(None, ge=0)
+    settings: dict[str, Any] | None = None
 
     @field_validator("plan")
     @classmethod
-    def validate_plan(cls, v: Optional[str]) -> Optional[str]:
+    def validate_plan(cls, v: str | None) -> str | None:
         if v is None:
             return v
         allowed = {"free", "starter", "professional", "enterprise"}
@@ -49,7 +49,7 @@ class TenantUpdateRequest(BaseModel):
 
     @field_validator("status")
     @classmethod
-    def validate_status(cls, v: Optional[str]) -> Optional[str]:
+    def validate_status(cls, v: str | None) -> str | None:
         if v is None:
             return v
         allowed = {"active", "suspended", "deleted"}

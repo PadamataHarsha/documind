@@ -2,7 +2,7 @@
 from __future__ import annotations  # `list()` method must not shadow list[...] hints
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,15 +20,15 @@ class AuditRepository:
         self,
         *,
         tenant_id: UUID,
-        actor_id: Optional[UUID],
+        actor_id: UUID | None,
         actor_type: str,
         action: str,
         resource_type: str,
-        resource_id: Optional[UUID] = None,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
-        request_id: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        resource_id: UUID | None = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
+        request_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
         status: str = "success",
     ) -> AuditLog:
         log = AuditLog(
@@ -52,11 +52,11 @@ class AuditRepository:
         self,
         tenant_id: UUID,
         *,
-        actor_id: Optional[UUID] = None,
-        action: Optional[str] = None,
-        resource_type: Optional[str] = None,
-        since: Optional[datetime] = None,
-        until: Optional[datetime] = None,
+        actor_id: UUID | None = None,
+        action: str | None = None,
+        resource_type: str | None = None,
+        since: datetime | None = None,
+        until: datetime | None = None,
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[AuditLog], int]:

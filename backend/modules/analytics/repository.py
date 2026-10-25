@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +32,7 @@ class AnalyticsRepository:
         return await self.db.scalar(select_conversation_count_since(tenant_id, since)) or 0
 
     async def get_message_count_since(
-        self, tenant_id: UUID, since: datetime, role: Optional[str] = "user"
+        self, tenant_id: UUID, since: datetime, role: str | None = "user"
     ) -> int:
         return await self.db.scalar(select_message_count_since(tenant_id, since, role=role)) or 0
 
@@ -44,6 +43,6 @@ class AnalyticsRepository:
         rows = (await self.db.execute(select_daily_upload_counts(tenant_id, days))).all()
         return [{"date": row.day.date().isoformat(), "count": row.cnt} for row in rows]
 
-    async def get_avg_response_latency_ms(self, tenant_id: UUID) -> Optional[float]:
+    async def get_avg_response_latency_ms(self, tenant_id: UUID) -> float | None:
         result = await self.db.scalar(select_avg_response_latency(tenant_id))
         return round(float(result), 1) if result else None

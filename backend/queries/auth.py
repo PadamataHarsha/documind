@@ -10,7 +10,6 @@ from sqlalchemy import Select, select, update
 from models import RefreshToken
 from queries import utc_now
 
-
 # ─── Refresh tokens ──────────────────────────────────────────────────────────
 
 def select_refresh_token_by_hash(token_hash: str) -> Select:

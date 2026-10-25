@@ -5,7 +5,6 @@ Handles login, token issuance, refresh, logout, and account locking.
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Optional
 
 import structlog
 
@@ -42,8 +41,8 @@ class AuthService:
         self,
         email: str,
         password: str,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
     ) -> tuple[TokenResponse, str]:
         """
         Authenticate user with email/password.
@@ -76,7 +75,7 @@ class AuthService:
         roles = [role.name for role in user.roles]
 
         # Issue tokens
-        access_token, expires_at = create_access_token(
+        access_token, _ = create_access_token(
             user_id=user.id,
             tenant_id=user.tenant_id,
             email=user.email,
@@ -147,7 +146,7 @@ class AuthService:
             ),
         ), raw_new_refresh
 
-    async def logout(self, jti: str, raw_refresh_token: Optional[str] = None) -> None:
+    async def logout(self, jti: str, raw_refresh_token: str | None = None) -> None:
         """Revoke access token (blocklist) and refresh token."""
         # Block the access token JTI
         await blocklist_token(

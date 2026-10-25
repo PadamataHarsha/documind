@@ -3,13 +3,11 @@ Tenant queries — typed SQLAlchemy statements for tenant management.
 """
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Select, and_, func, select, update
 
 from models import Document, Tenant, User
-
 
 # ─── Selects ──────────────────────────────────────────────────────────────────
 
@@ -29,8 +27,8 @@ def select_tenant_by_slug(slug: str) -> Select:
 
 def select_tenants(
     *,
-    status: Optional[str] = None,
-    plan: Optional[str] = None,
+    status: str | None = None,
+    plan: str | None = None,
 ) -> Select:
     """Filtered tenant list query."""
     stmt = select(Tenant).where(Tenant.deleted_at.is_(None))

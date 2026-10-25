@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 from rag.retriever import ScoredChunk
@@ -16,7 +15,7 @@ class Citation:
     document_id: UUID
     document_title: str
     document_filename: str
-    page_number: Optional[int]
+    page_number: int | None
     excerpt: str
 
 
@@ -33,9 +32,9 @@ class CitationEngine:
         Find [N] references in the answer, map to source chunks.
         Returns (answer, citations_list).
         """
-        referenced_indices = set(
+        referenced_indices = {
             int(m) for m in self.CITATION_PATTERN.findall(answer)
-        )
+        }
 
         citations = []
         for idx in sorted(referenced_indices):

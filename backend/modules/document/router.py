@@ -4,10 +4,19 @@ Document router — upload, list, get, update, delete, and status streaming.
 from __future__ import annotations
 
 import json
-from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
 from fastapi.responses import StreamingResponse
 
 from core.dependencies import CurrentToken, DbSession, Pagination, RedisConn
@@ -46,8 +55,8 @@ async def upload_document(
     request: Request,
     token: CurrentToken,
     file: UploadFile = File(...),
-    title: Optional[str] = Form(None),
-    description: Optional[str] = Form(None),
+    title: str | None = Form(None),
+    description: str | None = Form(None),
     tags: str = Form("[]"),  # JSON array string
     service: DocumentService = Depends(get_document_service),
 ):
@@ -89,9 +98,9 @@ async def list_documents(
     token: CurrentToken,
     pagination: Pagination,
     db: DbSession,
-    status_filter: Optional[str] = Query(None, alias="status"),
-    tags: Optional[list[str]] = Query(None),
-    uploaded_by: Optional[UUID] = Query(None),
+    status_filter: str | None = Query(None, alias="status"),
+    tags: list[str] | None = Query(None),
+    uploaded_by: UUID | None = Query(None),
 ):
     """List documents for the current tenant with optional filters."""
     repo = DocumentRepository(db)

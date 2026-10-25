@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
@@ -27,9 +27,9 @@ class UserCreateRequest(BaseModel):
 
 
 class UserUpdateRequest(BaseModel):
-    full_name: Optional[str] = Field(None, min_length=1, max_length=255)
-    avatar_url: Optional[str] = None
-    settings: Optional[dict[str, Any]] = None
+    full_name: str | None = Field(None, min_length=1, max_length=255)
+    avatar_url: str | None = None
+    settings: dict[str, Any] | None = None
 
 
 class UserRoleUpdateRequest(BaseModel):
@@ -54,7 +54,7 @@ class RoleResponse(BaseModel):
     id: UUID
     name: str
     display_name: str
-    description: Optional[str]
+    description: str | None
     is_system: bool
 
     model_config = {"from_attributes": True}
@@ -65,11 +65,11 @@ class UserResponse(BaseModel):
     tenant_id: UUID
     email: str
     full_name: str
-    avatar_url: Optional[str]
+    avatar_url: str | None
     is_active: bool
     is_superadmin: bool
     email_verified: bool
-    last_login_at: Optional[datetime]
+    last_login_at: datetime | None
     roles: list[RoleResponse]
     settings: dict[str, Any]
     created_at: datetime
@@ -86,4 +86,4 @@ class UserListResponse(BaseModel):
 
 
 class UserDeactivateRequest(BaseModel):
-    reason: Optional[str] = None
+    reason: str | None = None

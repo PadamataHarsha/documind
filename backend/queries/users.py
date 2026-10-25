@@ -3,14 +3,12 @@ User queries — typed SQLAlchemy statements for users and roles.
 """
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Select, and_, delete, func, insert, select, update
 from sqlalchemy.orm import selectinload
 
 from models import Role, User, user_roles_table
-
 
 # ─── Selects ──────────────────────────────────────────────────────────────────
 
@@ -52,7 +50,7 @@ def select_user_by_email_global(email: str) -> Select:
 def select_users(
     tenant_id: UUID,
     *,
-    is_active: Optional[bool] = None,
+    is_active: bool | None = None,
 ) -> Select:
     """
     Filtered user list query for a tenant.
@@ -119,7 +117,7 @@ def insert_user_role(user_id: UUID, role_id: UUID):
 
 # ─── Login tracking ──────────────────────────────────────────────────────────
 
-def update_login_success(user_id: UUID, ip_address: Optional[str]):
+def update_login_success(user_id: UUID, ip_address: str | None):
     """Record successful login: reset counters, update timestamp."""
     from queries import utc_now
     return (

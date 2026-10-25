@@ -3,7 +3,7 @@
 # its own type hints, so the annotations below use typing.List instead.
 from __future__ import annotations
 
-from typing import List, Optional
+import builtins
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +33,7 @@ class DocumentRepository:
         await self.db.refresh(doc)
         return doc
 
-    async def get_by_id(self, document_id: UUID, tenant_id: UUID) -> Optional[Document]:
+    async def get_by_id(self, document_id: UUID, tenant_id: UUID) -> Document | None:
         result = await self.db.execute(select_document(document_id, tenant_id))
         return result.scalar_one_or_none()
 
@@ -41,12 +41,12 @@ class DocumentRepository:
         self,
         tenant_id: UUID,
         *,
-        status: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        uploaded_by: Optional[UUID] = None,
+        status: str | None = None,
+        tags: builtins.list[str] | None = None,
+        uploaded_by: UUID | None = None,
         limit: int = 20,
         offset: int = 0,
-    ) -> tuple[List[Document], int]:
+    ) -> tuple[builtins.list[Document], int]:
         base = select_documents(tenant_id, status=status, tags=tags, uploaded_by=uploaded_by)
         total = await count_from(self.db, base.subquery())
         result = await self.db.execute(base.limit(limit).offset(offset))
@@ -56,7 +56,7 @@ class DocumentRepository:
         self,
         document_id: UUID,
         status: str,
-        error_message: Optional[str] = None,
+        error_message: str | None = None,
         **extra_fields,
     ) -> None:
         await self.db.execute(
@@ -67,22 +67,22 @@ class DocumentRepository:
         result = await self.db.execute(soft_delete_document(document_id, tenant_id))
         return result.rowcount > 0
 
-    async def update(self, document_id: UUID, tenant_id: UUID, **kwargs) -> Optional[Document]:
+    async def update(self, document_id: UUID, tenant_id: UUID, **kwargs) -> Document | None:
         await self.db.execute(update_document_fields(document_id, tenant_id, **kwargs))
         return await self.get_by_id(document_id, tenant_id)
 
-    async def create_chunks(self, chunks: List[dict]) -> List[DocumentChunk]:
+    async def create_chunks(self, chunks: builtins.list[dict]) -> builtins.list[DocumentChunk]:
         chunk_objects = [DocumentChunk(**c) for c in chunks]
         self.db.add_all(chunk_objects)
         await self.db.flush()
         return chunk_objects
 
-    async def get_chunks(self, document_id: UUID, tenant_id: UUID) -> List[DocumentChunk]:
+    async def get_chunks(self, document_id: UUID, tenant_id: UUID) -> builtins.list[DocumentChunk]:
         result = await self.db.execute(select_document_chunks(document_id, tenant_id))
         return list(result.scalars().all())
 
     async def get_total_storage_used(self, tenant_id: UUID) -> int:
         return await self.db.scalar(select_total_storage(tenant_id)) or 0
 
-    async def get_document_count(self, tenant_id: UUID, *, status: Optional[str] = None) -> int:
+    async def get_document_count(self, tenant_id: UUID, *, status: str | None = None) -> int:
         return await self.db.scalar(select_document_count(tenant_id, status=status)) or 0

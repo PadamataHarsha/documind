@@ -1,7 +1,6 @@
 """Ingestion repository — data access for ingestion_jobs."""
 from __future__ import annotations  # `list()` method must not shadow list[...] hints
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import and_, func, select
@@ -18,8 +17,8 @@ class IngestionRepository:
         self,
         tenant_id: UUID,
         *,
-        document_id: Optional[UUID] = None,
-        status: Optional[str] = None,
+        document_id: UUID | None = None,
+        status: str | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> tuple[list[IngestionJob], int]:
@@ -36,7 +35,7 @@ class IngestionRepository:
         result = await self.db.execute(base.limit(limit).offset(offset))
         return list(result.scalars().all()), total or 0
 
-    async def get(self, job_id: UUID, tenant_id: UUID) -> Optional[IngestionJob]:
+    async def get(self, job_id: UUID, tenant_id: UUID) -> IngestionJob | None:
         result = await self.db.execute(
             select(IngestionJob).where(and_(
                 IngestionJob.id == job_id,

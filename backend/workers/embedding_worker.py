@@ -31,9 +31,10 @@ def generate_embeddings(self: Task, document_id: str, tenant_id: str) -> dict:
 
 
 async def _generate_embeddings_async(task, document_id: str, tenant_id: str) -> dict:
+    from sqlalchemy import text
+
     from database import async_session_factory
     from modules.document.repository import DocumentRepository
-    from sqlalchemy import text
 
     doc_id = UUID(document_id)
     t_id = UUID(tenant_id)
@@ -107,7 +108,7 @@ async def _generate_embeddings_async(task, document_id: str, tenant_id: str) -> 
             )
             return {"status": "ready", "chunk_count": len(chunks)}
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — OpenAI/DB/vector-store errors all vary
             logger.error(
                 "embedding.failed",
                 document_id=document_id,

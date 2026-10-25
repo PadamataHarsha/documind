@@ -10,7 +10,7 @@ Both are scheduled via Celery beat (see celery_app.py).
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import structlog
 
@@ -34,7 +34,7 @@ async def _cleanup_soft_deleted_async() -> dict:
     from integrations.storage.local import LocalStorageClient
     from models import Conversation, Document, User
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=settings.SOFT_DELETE_RETENTION_DAYS)
+    cutoff = datetime.now(UTC) - timedelta(days=settings.SOFT_DELETE_RETENTION_DAYS)
     storage = LocalStorageClient()
     removed = {"documents": 0, "conversations": 0, "users": 0, "storage_objects": 0}
 
@@ -51,7 +51,7 @@ async def _cleanup_soft_deleted_async() -> dict:
             try:
                 await storage.delete(doc.storage_path)
                 removed["storage_objects"] += 1
-            except Exception as exc:  # storage best-effort; never block the purge
+            except Exception as exc:  # noqa: BLE001 — storage errors vary by backend; never block the purge
                 logger.warning("cleanup.storage_delete_failed", document_id=str(doc.id), error=str(exc))
         if docs:
             await db.execute(delete(Document).where(Document.id.in_([d.id for d in docs])))
@@ -95,7 +95,7 @@ async def _aggregate_usage_metrics_async() -> dict:
     )
     from queries.documents import select_document_count
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     snapshots = 0
 

@@ -1,7 +1,6 @@
 """Tenant service — business logic for tenant lifecycle, quotas, and provisioning."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 import structlog
@@ -40,8 +39,8 @@ class TenantService:
     async def list_tenants(
         self,
         *,
-        status: Optional[str] = None,
-        plan: Optional[str] = None,
+        status: str | None = None,
+        plan: str | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> tuple[list[TenantResponse], int]:

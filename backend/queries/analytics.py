@@ -4,14 +4,12 @@ Used by the analytics repository/service for dashboard and reporting.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import Select, and_, func, select
 
 from models import Conversation, Document, Message, Tenant, User
-
 
 # ─── Document aggregates ─────────────────────────────────────────────────────
 
@@ -28,7 +26,7 @@ def select_document_counts_by_status(tenant_id: UUID) -> Select:
 
 def select_daily_upload_counts(tenant_id: UUID, days: int = 30) -> Select:
     """Daily document upload counts for the last N days (activity chart)."""
-    since = datetime.now(timezone.utc) - timedelta(days=days)
+    since = datetime.now(UTC) - timedelta(days=days)
     # Build the date_trunc expression ONCE and reuse it across select/group_by/
     # order_by. Calling it three times emits three separate bind params, so
     # Postgres won't recognize them as the same expression and raises a GROUP BY
@@ -74,7 +72,7 @@ def select_message_count_since(
     tenant_id: UUID,
     since: datetime,
     *,
-    role: Optional[str] = "user",
+    role: str | None = "user",
 ) -> Select:
     """COUNT of messages since a datetime, optionally filtered by role."""
     conditions = [
@@ -122,7 +120,7 @@ def select_platform_user_count() -> Select:
     return select(func.count(User.id)).where(User.deleted_at.is_(None))
 
 
-def select_platform_document_count(*, status: Optional[str] = None) -> Select:
+def select_platform_document_count(*, status: str | None = None) -> Select:
     """COUNT of all documents, optionally filtered by status."""
     stmt = select(func.count(Document.id)).where(Document.deleted_at.is_(None))
     if status:

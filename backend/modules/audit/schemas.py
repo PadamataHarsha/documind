@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -11,14 +11,14 @@ from pydantic import BaseModel
 class AuditLogResponse(BaseModel):
     id: UUID
     tenant_id: UUID
-    actor_id: Optional[UUID]
+    actor_id: UUID | None
     actor_type: str
     action: str
     resource_type: str
-    resource_id: Optional[UUID]
-    ip_address: Optional[str]
-    user_agent: Optional[str]
-    request_id: Optional[str]
+    resource_id: UUID | None
+    ip_address: str | None
+    user_agent: str | None
+    request_id: str | None
     metadata: dict[str, Any]
     status: str
     created_at: datetime

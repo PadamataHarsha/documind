@@ -61,7 +61,7 @@ async def run_ingestion_inline(document_id: str, tenant_id: str) -> None:
     """
     try:
         await _process_document_async(None, document_id, tenant_id)
-    except Exception:
+    except Exception:  # noqa: BLE001 — inline runner must log and swallow to avoid orphaning bg tasks
         logger.error(
             "ingestion.inline_failed",
             document_id=document_id,
@@ -165,7 +165,7 @@ async def _process_document_async(task, document_id: str, tenant_id: str) -> dic
             logger.info("ingestion.completed", document_id=document_id, chunks=len(chunks))
             return {"status": "chunked", "chunk_count": len(chunks)}
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — parser/storage/DB errors all differ by backend
             logger.error(
                 "ingestion.failed",
                 document_id=document_id,
@@ -210,6 +210,7 @@ def _parse_pdf(content: bytes) -> tuple[str, int]:
 def _parse_docx(content: bytes) -> tuple[str, int]:
     """Extract text from DOCX."""
     import io
+
     from docx import Document as DocxDoc
     doc = DocxDoc(io.BytesIO(content))
     paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
@@ -235,7 +236,7 @@ def _count_tokens(text: str) -> int:
             import tiktoken
             _TOKEN_ENCODER = tiktoken.get_encoding("cl100k_base")
         return len(_TOKEN_ENCODER.encode(text))
-    except Exception:
+    except Exception:  # noqa: BLE001 — tiktoken may raise ImportError or encoding errors; fallback is safe
         # Rough fallback: ~1.3 tokens per whitespace word.
         return int(len(text.split()) * 1.3)
 
@@ -246,6 +247,7 @@ def _chunk_text(text: str, document_id: UUID, tenant_id: UUID) -> list[dict]:
     Returns list of chunk dicts ready for DB insertion.
     """
     import hashlib
+
     from langchain_text_splitters import RecursiveCharacterTextSplitter
 
     splitter = RecursiveCharacterTextSplitter(

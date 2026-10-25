@@ -6,13 +6,11 @@ The repository (or service) calls session.execute(query).
 """
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Select, and_, func, select, update
 
 from models import Document, DocumentChunk
-
 
 # ─── Selects ──────────────────────────────────────────────────────────────────
 
@@ -30,9 +28,9 @@ def select_document(document_id: UUID, tenant_id: UUID) -> Select:
 def select_documents(
     tenant_id: UUID,
     *,
-    status: Optional[str] = None,
-    tags: Optional[list[str]] = None,
-    uploaded_by: Optional[UUID] = None,
+    status: str | None = None,
+    tags: list[str] | None = None,
+    uploaded_by: UUID | None = None,
 ) -> Select:
     """
     Filtered document list query.
@@ -76,7 +74,7 @@ def select_total_storage(tenant_id: UUID) -> Select:
 def select_document_count(
     tenant_id: UUID,
     *,
-    status: Optional[str] = None,
+    status: str | None = None,
 ) -> Select:
     """COUNT of documents in tenant, optionally filtered by status."""
     stmt = select(func.count(Document.id)).where(
@@ -93,7 +91,7 @@ def update_document_status(
     document_id: UUID,
     status: str,
     *,
-    error_message: Optional[str] = None,
+    error_message: str | None = None,
     **extra_fields,
 ):
     """Update document status (and optional error message)."""

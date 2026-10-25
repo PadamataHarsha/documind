@@ -4,8 +4,8 @@ Coordinates: query rewriting → hybrid retrieval → reranking → prompt → s
 """
 from __future__ import annotations
 
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
-from typing import AsyncGenerator, Optional
 from uuid import UUID
 
 import structlog
@@ -41,8 +41,8 @@ class RAGResult:
     citations: list[Citation]
     chunks_used: list[ScoredChunk]
     retrieval_latency_ms: int
-    total_tokens: Optional[int] = None
-    model_name: Optional[str] = None
+    total_tokens: int | None = None
+    model_name: str | None = None
 
 
 class RAGEngine:
@@ -73,8 +73,8 @@ class RAGEngine:
         query: str,
         tenant_id: UUID,
         conversation_id: UUID,
-        document_ids: Optional[list[UUID]] = None,
-        metadata_filters: Optional[dict] = None,
+        document_ids: list[UUID] | None = None,
+        metadata_filters: dict | None = None,
     ) -> AsyncGenerator[dict, None]:
         """
         Stream a RAG answer for the given query.

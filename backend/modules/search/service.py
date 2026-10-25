@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import hashlib
 import time
-from typing import Optional
 from uuid import UUID
 
 import structlog
@@ -28,10 +27,10 @@ class SearchService:
         query: str,
         tenant_id: UUID,
         *,
-        document_ids: Optional[list[UUID]] = None,
+        document_ids: list[UUID] | None = None,
         top_k: int = 10,
         search_mode: str = "hybrid",
-        metadata_filters: Optional[dict] = None,
+        metadata_filters: dict | None = None,
     ) -> SearchResponse:
         # Try cache
         cache_key = self._cache_key(query, tenant_id, document_ids, top_k, search_mode)
@@ -98,7 +97,7 @@ class SearchService:
         self,
         query: str,
         tenant_id: UUID,
-        doc_ids: Optional[list[UUID]],
+        doc_ids: list[UUID] | None,
         top_k: int,
         mode: str,
     ) -> str:

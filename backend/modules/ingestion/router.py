@@ -1,7 +1,6 @@
 """Ingestion router — inspect ingestion jobs and retry stuck/failed documents."""
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, status
@@ -19,8 +18,8 @@ async def list_jobs(
     token: CurrentToken,
     db: DbSession,
     pagination: Pagination,
-    document_id: Optional[UUID] = Query(None),
-    status_filter: Optional[str] = Query(None, alias="status"),
+    document_id: UUID | None = Query(None),
+    status_filter: str | None = Query(None, alias="status"),
 ):
     repo = IngestionRepository(db)
     items, total = await repo.list(

@@ -4,7 +4,6 @@ Audit queries — append-only audit log statements.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Select, select
@@ -15,11 +14,11 @@ from models import AuditLog
 def select_audit_logs(
     tenant_id: UUID,
     *,
-    actor_id: Optional[UUID] = None,
-    action: Optional[str] = None,
-    resource_type: Optional[str] = None,
-    since: Optional[datetime] = None,
-    until: Optional[datetime] = None,
+    actor_id: UUID | None = None,
+    action: str | None = None,
+    resource_type: str | None = None,
+    since: datetime | None = None,
+    until: datetime | None = None,
 ) -> Select:
     """Filtered audit log query. Caller handles pagination."""
     stmt = select(AuditLog).where(AuditLog.tenant_id == tenant_id)
